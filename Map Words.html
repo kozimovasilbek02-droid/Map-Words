@@ -1,0 +1,1083 @@
+import React, { useState, useEffect } from 'react';
+import { Book, Map, Compass, Building, TreePine, MessageCircle, Volume2, Eye, CheckCircle, Sparkles, BrainCircuit, X, Loader2, RefreshCw, ArrowRight, HelpCircle, Headphones, MessageSquare, Image as ImageIcon, MapPin, AlertCircle, Key } from 'lucide-react';
+
+// API Key - Agar sizda kalit bo'lsa, shu yerga yozing.
+const apiKey = ""; 
+
+const vocabularyData = {
+  directions: {
+    title: "Yo'nalish",
+    icon: <Compass size={18} />,
+    words: [
+      { en: "Go straight ahead", uz: "To'g'ri oldinga boring" },
+      { en: "Go straight on", uz: "To'g'ri davom eting" },
+      { en: "Walk straight through", uz: "To'g'ridan-to'g'ri yurib o'ting" },
+      { en: "Continue forward", uz: "Oldinga davom eting" },
+      { en: "Keep going", uz: "Harakatlanishda davom eting" },
+      { en: "Carry on walking", uz: "Yurishda davom eting" },
+      { en: "Proceed straight", uz: "To'g'ri harakatlaning" },
+      { en: "Advance forward", uz: "Oldinga siljing" },
+      { en: "Head straight", uz: "To'g'ri yo'l oling" },
+      { en: "Move forward", uz: "Oldinga yuring" },
+      { en: "Go past the shop", uz: "Do'kondan o'tib keting" },
+      { en: "Go past the station", uz: "Vokzaldan o'tib keting" },
+      { en: "Walk past the park", uz: "Bog' yonidan o'ting" },
+      { en: "Pass the building", uz: "Binodan o'tib keting" },
+      { en: "Cross the road", uz: "Yo'lni kesib o'ting" },
+      { en: "Cross the bridge", uz: "Ko'prikni kesib o'ting" },
+      { en: "Cross over", uz: "Narigi tomonga o'ting" },
+      { en: "Cross the street", uz: "Ko'chani kesib o'ting" },
+      { en: "Cross the junction", uz: "Chorrahani kesib o'ting" },
+      { en: "Turn left", uz: "Chapga buriling" },
+      { en: "Turn sharply left", uz: "Keskin chapga buriling" },
+      { en: "Turn right", uz: "O'ngga buriling" },
+      { en: "Turn sharply right", uz: "Keskin o'ngga buriling" },
+      { en: "Make a left turn", uz: "Chapga burilish qiling" },
+      { en: "Make a right turn", uz: "O'ngga burilish qiling" },
+      { en: "Take the first left", uz: "Birinchi chapga buriling" },
+      { en: "Take the first right", uz: "Birinchi o'ngga buriling" },
+      { en: "Take the second left", uz: "Ikkinchi chapga buriling" },
+      { en: "Take the second right", uz: "Ikkinchi o'ngga buriling" },
+      { en: "Take the third turning", uz: "Uchinchi burilishga kiring" },
+      { en: "Immediate left", uz: "Darhol chapda" },
+      { en: "Immediate right", uz: "Darhol o'ngda" },
+      { en: "Bear left", uz: "Chapga og'ib harakatlaning" },
+      { en: "Bear right", uz: "O'ngga og'ib harakatlaning" },
+      { en: "Fork left", uz: "Yo'l ayrisida chapni tanlang" },
+      { en: "Fork right", uz: "Yo'l ayrisida o'ngni tanlang" },
+      { en: "Bend to the left", uz: "Chapga qayriling" },
+      { en: "Bend to the right", uz: "O'ngga qayriling" },
+      { en: "Curve around", uz: "Aylanib o'ting (egri yo'l)" },
+      { en: "At the crossroads, turn left", uz: "Chorrahada chapga buriling" },
+      { en: "At the roundabout, go straight", uz: "Aylanada to'g'ri boring" },
+      { en: "At the roundabout, take the 1st exit", uz: "Aylanada 1-chiqishdan chiqing" },
+      { en: "At the roundabout, take the 2nd exit", uz: "Aylanada 2-chiqishdan chiqing" },
+      { en: "At the roundabout, take the 3rd exit", uz: "Aylanada 3-chiqishdan chiqing" },
+      { en: "Go along the street", uz: "Ko'cha bo'ylab boring" },
+      { en: "Go down the street", uz: "Ko'chadan pastga yuring" },
+      { en: "Go up the street", uz: "Ko'chadan yuqoriga yuring" },
+      { en: "Go down the hill", uz: "Tepalikdan pastga tushing" },
+      { en: "Go up the hill", uz: "Tepalikka chiqing" },
+      { en: "Ascend the stairs", uz: "Zinadan ko'tariling" },
+      { en: "Descend the stairs", uz: "Zinadan tushing" },
+      { en: "Walk along the river", uz: "Daryo bo'ylab yuring" },
+      { en: "Walk along the path", uz: "Yo'lak bo'ylab yuring" },
+      { en: "Follow the path", uz: "Yo'lakdan boring" },
+      { en: "Follow the signs", uz: "Belgilar bo'yicha boring" },
+      { en: "Follow the road", uz: "Yo'l bo'ylab boring" },
+      { en: "Follow the track", uz: "Iz (yo'l) bo'ylab boring" },
+      { en: "Keep to the left", uz: "Chap tomonlama yuring" },
+      { en: "Keep to the right", uz: "O'ng tomonlama yuring" },
+      { en: "Stay on the main road", uz: "Asosiy yo'lda qoling" },
+      { en: "Take the narrow lane", uz: "Tor ko'chadan boring" },
+      { en: "Take the side street", uz: "Yon ko'chadan boring" },
+      { en: "Take the shortcut", uz: "Qisqa yo'ldan boring" },
+      { en: "Go through the gate", uz: "Darvozadan o'ting" },
+      { en: "Go through the tunnel", uz: "Tunneldan o'ting" },
+      { en: "Go through the entrance", uz: "Kirish joyidan o'ting" },
+      { en: "Go over the bridge", uz: "Ko'prik ustidan o'ting" },
+      { en: "Go under the bridge", uz: "Ko'prik ostidan o'ting" },
+      { en: "Head towards the park", uz: "Park tomon boring" },
+      { en: "Head north", uz: "Shimolga qarab boring" }
+    ]
+  },
+  location: {
+    title: "Joylashuv",
+    icon: <Map size={18} />,
+    words: [
+      { en: "In the middle", uz: "O'rtada" },
+      { en: "In the centre", uz: "Markazda" },
+      { en: "At the back", uz: "Orqa tomonda" },
+      { en: "At the front", uz: "Old tomonda" },
+      { en: "At the side", uz: "Yonida" },
+      { en: "Near the entrance", uz: "Kirish yonida" },
+      { en: "Near the exit", uz: "Chiqish yonida" },
+      { en: "In front of", uz: "Oldida" },
+      { en: "Behind", uz: "Ortida" },
+      { en: "Opposite", uz: "Qarshisida" },
+      { en: "Adjacent to", uz: "Yonida (tutash)" },
+      { en: "Close to", uz: "Yaqinida" },
+      { en: "Next to", uz: "Yonida" },
+      { en: "Beside", uz: "Yonma-yon" },
+      { en: "Far from", uz: "Uzoqda" },
+      { en: "On the left-hand side", uz: "Chap qo'l tomonda" },
+      { en: "On the right-hand side", uz: "O'ng qo'l tomonda" },
+      { en: "To the left of", uz: "Chap tomonida" },
+      { en: "To the right of", uz: "O'ng tomonida" },
+      { en: "Top floor", uz: "Eng yuqori qavat" },
+      { en: "Ground floor", uz: "Birinchi qavat" },
+      { en: "First floor", uz: "Ikkinchi qavat (Britaniya)" },
+      { en: "Basement", uz: "Podval / Yerto'la" },
+      { en: "Upstairs", uz: "Yuqorida (zinadan)" },
+      { en: "Downstairs", uz: "Pastda (zinadan)" },
+      { en: "Corner of the street", uz: "Ko'cha burchagida" },
+      { en: "End of the corridor", uz: "Yo'lak oxirida" },
+      { en: "Beginning of the corridor", uz: "Yo'lak boshida" },
+      { en: "Main entrance", uz: "Asosiy kirish" },
+      { en: "Side entrance", uz: "Yon kirish" },
+      { en: "City centre", uz: "Shahar markazi" },
+      { en: "Town square", uz: "Shahar maydoni" },
+      { en: "Opposite side of the river", uz: "Daryoning narigi tomoni" },
+      { en: "Residential area", uz: "Aholi yashash joyi" },
+      { en: "Industrial area", uz: "Sanoat hududi" },
+      { en: "Rural area", uz: "Qishloq hududi" },
+      { en: "Suburban area", uz: "Shahar atrofi" },
+      { en: "Outer edge", uz: "Tashqi chekka" },
+      { en: "Inner circle", uz: "Ichki aylana" },
+      { en: "Border of the park", uz: "Park chegarasi" },
+      { en: "In the vicinity of", uz: "Atrofida / Yaqinida" },
+      { en: "In the proximity of", uz: "Yaqin orada" },
+      { en: "To the north", uz: "Shimolga" },
+      { en: "To the south", uz: "Janubga" },
+      { en: "To the east", uz: "Sharqqa" },
+      { en: "To the west", uz: "G'arbga" },
+      { en: "North-west corner", uz: "Shimoli-g'arbiy burchak" },
+      { en: "North-east corner", uz: "Shimoli-sharqiy burchak" },
+      { en: "South-west corner", uz: "Janubi-g'arbiy burchak" },
+      { en: "South-east corner", uz: "Janubi-sharqiy burchak" }
+    ]
+  },
+  buildings: {
+    title: "Binolar",
+    icon: <Building size={18} />,
+    words: [
+      { en: "Library", uz: "Kutubxona" },
+      { en: "Lecture hall", uz: "Ma'ruza zali" },
+      { en: "Seminar room", uz: "Seminar xonasi" },
+      { en: "Main hall", uz: "Asosiy zal" },
+      { en: "Reception", uz: "Qabul bo'limi" },
+      { en: "Administration office", uz: "Ma'muriyat" },
+      { en: "Accommodation office", uz: "Turar-joy bo'limi" },
+      { en: "Student union", uz: "Talabalar uyushmasi" },
+      { en: "Cafeteria", uz: "Oshxona (kafeterya)" },
+      { en: "Dining hall", uz: "Ovqatlanish zali" },
+      { en: "Sports centre", uz: "Sport markazi" },
+      { en: "Fitness club", uz: "Fitnes klubi" },
+      { en: "Swimming pool", uz: "Suzish havzasi" },
+      { en: "Bookshop", uz: "Kitob do'koni" },
+      { en: "Stationery shop", uz: "Kantselyariya do'koni" },
+      { en: "Convenience store", uz: "Kichik do'kon" },
+      { en: "Supermarket", uz: "Supermarket" },
+      { en: "Pharmacy", uz: "Dorixona" },
+      { en: "Post office", uz: "Pochta" },
+      { en: "Police station", uz: "Politsiya mahkamasi" },
+      { en: "Fire station", uz: "O't o'chirish bo'limi" },
+      { en: "Railway station", uz: "Temir yo'l vokzali" },
+      { en: "Bus station", uz: "Avtovokzal" },
+      { en: "Bus stop", uz: "Avtobus bekati" },
+      { en: "Car park", uz: "Avtoturargoh" },
+      { en: "Multi-storey car park", uz: "Ko'p qavatli avtoturargoh" },
+      { en: "Cinema", uz: "Kinoteatr" },
+      { en: "Theatre", uz: "Teatr" },
+      { en: "Museum", uz: "Muzey" },
+      { en: "Art gallery", uz: "San'at galereyasi" },
+      { en: "Exhibition hall", uz: "Ko'rgazma zali" },
+      { en: "Conference centre", uz: "Konferensiya markazi" },
+      { en: "Information desk", uz: "Ma'lumot stoli" },
+      { en: "Staff room", uz: "Xodimlar xonasi" },
+      { en: "Laboratory", uz: "Laboratoriya" },
+      { en: "Language centre", uz: "Til markazi" },
+      { en: "Dormitory", uz: "Yotoqxona" },
+      { en: "Bank", uz: "Bank" },
+      { en: "ATM machine", uz: "Bankomat" },
+      { en: "Clinic", uz: "Klinika" },
+      { en: "Hospital", uz: "Kasalxona" },
+      { en: "Dentist", uz: "Tish shifokori" },
+      { en: "Nursery", uz: "Bolalar bog'chasi" },
+      { en: "Primary school", uz: "Boshlang'ich maktab" },
+      { en: "Secondary school", uz: "O'rta maktab" },
+      { en: "University", uz: "Universitet" },
+      { en: "Stadium", uz: "Stadion" },
+      { en: "Hostel", uz: "Mehmonxona (arzon)" },
+      { en: "Skyscraper", uz: "Osmono'par bino" },
+      { en: "Warehouse", uz: "Omborxona" }
+    ]
+  },
+  nature: {
+    title: "Tabiat",
+    icon: <TreePine size={18} />,
+    words: [
+      { en: "Park", uz: "Istirohat bog'i" },
+      { en: "Garden", uz: "Bog' (hovli)" },
+      { en: "Flower bed", uz: "Gulzor" },
+      { en: "Lawn", uz: "Maysazor" },
+      { en: "Playground", uz: "O'yin maydonchasi" },
+      { en: "Picnic area", uz: "Piknik hududi" },
+      { en: "Sports field", uz: "Sport maydoni" },
+      { en: "Football pitch", uz: "Futbol maydoni" },
+      { en: "Tennis court", uz: "Tennis korti" },
+      { en: "Golf course", uz: "Golf maydoni" },
+      { en: "Athletics track", uz: "Yugurish yo'lagi" },
+      { en: "Cycle path", uz: "Velosiped yo'lagi" },
+      { en: "Walking path", uz: "Piyodalar yo'lagi" },
+      { en: "Hiking trail", uz: "Tog' so'qmog'i" },
+      { en: "River", uz: "Daryo" },
+      { en: "Stream", uz: "Soy / Kichik daryo" },
+      { en: "Lake", uz: "Ko'l" },
+      { en: "Pond", uz: "Hovuz" },
+      { en: "Reservoir", uz: "Suv ombori" },
+      { en: "Canal", uz: "Kanal" },
+      { en: "Fountain", uz: "Favvora" },
+      { en: "Waterfall", uz: "Sharshara" },
+      { en: "Bridge", uz: "Ko'prik" },
+      { en: "Overpass", uz: "Estakada" },
+      { en: "Underpass", uz: "Yer osti yo'li" },
+      { en: "Tunnel", uz: "Tunnel" },
+      { en: "Mountain", uz: "Tog'" },
+      { en: "Hill", uz: "Tepalik" },
+      { en: "Valley", uz: "Vodiy" },
+      { en: "Forest", uz: "O'rmon" },
+      { en: "Wood", uz: "To'qay / Kichik o'rmon" },
+      { en: "Desert", uz: "Cho'l" },
+      { en: "Beach", uz: "Sohil (plyaj)" },
+      { en: "Coast", uz: "Dengiz bo'yi" },
+      { en: "Island", uz: "Orol" },
+      { en: "Peninsula", uz: "Yarim orol" },
+      { en: "Field", uz: "Dala" },
+      { en: "Farmland", uz: "Ekin maydoni" },
+      { en: "Meadow", uz: "O'tloq" },
+      { en: "Swamp", uz: "Botqoqlik" },
+      { en: "Nature reserve", uz: "Qo'riqxona" },
+      { en: "Campsite", uz: "Lager joyi" },
+      { en: "Orchard", uz: "Meva bog'i" },
+      { en: "Vineyard", uz: "Uzumzor" },
+      { en: "Cliff", uz: "Qoya" },
+      { en: "Bay", uz: "Ko'rfaz" },
+      { en: "Harbour", uz: "Bandargoh" },
+      { en: "Hedge", uz: "Jonli devor (o'simlikdan)" },
+      { en: "Fence", uz: "To'siq / Panjara" },
+      { en: "Footpath", uz: "So'qmoq yo'l" }
+    ]
+  },
+  phrases: {
+    title: "Iboralar",
+    icon: <MessageCircle size={18} />,
+    words: [
+      { en: "On the left-hand corner", uz: "Chap burchakda" },
+      { en: "On the right-hand corner", uz: "O'ng burchakda" },
+      { en: "At the T-junction", uz: "T shaklidagi chorrahada" },
+      { en: "At the Y-junction", uz: "Y shaklidagi chorrahada" },
+      { en: "At the fork in the road", uz: "Yo'l ayrisida" },
+      { en: "Take the first turning on the left", uz: "Birinchi chap burilishga kiring" },
+      { en: "Straight across the square", uz: "Maydon bo'ylab to'g'ri" },
+      { en: "Walk through the market", uz: "Bozor orqali yuring" },
+      { en: "Located on the left", uz: "Chapda joylashgan" },
+      { en: "Situated on the right", uz: "O'ngda joylashgan" },
+      { en: "Positioned in the middle", uz: "O'rtada o'rnatilgan" },
+      { en: "Surrounded by trees", uz: "Daraxtlar bilan o'ralgan" },
+      { en: "Next to the playground", uz: "O'yingoh yonida" },
+      { en: "Opposite the car park", uz: "Turargoh qarshisida" },
+      { en: "Just past the café", uz: "Kafedan o'tiboq" },
+      { en: "Just before the cinema", uz: "Kinoteatrga yetmasdan" },
+      { en: "Across the street from", uz: "Ko'chaning narigi betida" },
+      { en: "Within walking distance", uz: "Piyoda yuradigan masofada" },
+      { en: "Two blocks away", uz: "Ikki kvartal narida" },
+      { en: "Around the corner", uz: "Burchak orqasida" },
+      { en: "On the far side", uz: "Uzoq tomonida" },
+      { en: "Nearby the station", uz: "Vokzal yaqinida" },
+      { en: "Directly accessible", uz: "To'g'ridan-to'g'ri kirish mumkin" },
+      { en: "Easily reachable", uz: "Oson boriladigan" },
+      { en: "Within ten minutes' walk", uz: "10 daqiqalik piyoda yo'l" },
+      { en: "Just outside the city", uz: "Shahar tashqarisida" },
+      { en: "In the city centre", uz: "Shahar markazida" },
+      { en: "On the outskirts of town", uz: "Shahar chekkasida" },
+      { en: "In the countryside", uz: "Qishloq joyida" },
+      { en: "Facing the street", uz: "Ko'chaga yuzlangan" },
+      { en: "On the waterfront", uz: "Suv bo'yida" },
+      { en: "Running parallel to", uz: "Parallel ravishda ketgan" },
+      { en: "Branching off", uz: "Ajralib chiqqan (yo'l)" },
+      { en: "Leading off", uz: "Boshlab boruvchi" },
+      { en: "Winding road", uz: "Ilonizi yo'l" },
+      { en: "Dead end", uz: "Berk ko'cha" },
+      { en: "Pedestrian crossing", uz: "Piyodalar o'tish joyi" },
+      { en: "Traffic lights", uz: "Svetofor" },
+      { en: "One-way street", uz: "Bir tomonlama yo'l" },
+      { en: "Dual carriageway", uz: "Ikki taraflama katta yo'l" },
+      { en: "Converted into", uz: "Aylantirilgan (o'zgartirilgan)" },
+      { en: "Replaced by", uz: "O'rniga almashtirilgan" },
+      { en: "Demolished / Knocked down", uz: "Buzib tashlangan" },
+      { en: "Extended / Enlarged", uz: "Kengaytirilgan" },
+      { en: "Relocated to", uz: "Boshqa joyga ko'chirilgan" },
+      { en: "Renovated", uz: "Ta'mirlangan" },
+      { en: "Modernised", uz: "Zamonaviylashtirilgan" },
+      { en: "Constructed / Built", uz: "Qurilgan" },
+      { en: "Planted with trees", uz: "Daraxtlar ekilgan" },
+      { en: "Paved over", uz: "Asfalt qilingan" },
+      { en: "Pedestrianised area", uz: "Piyodalar zonasiga aylantirilgan" },
+      { en: "Residential zone", uz: "Aholi yashash zonasi" },
+      { en: "Commercial zone", uz: "Tijorat zonasi" },
+      { en: "Recreational area", uz: "Dam olish hududi" },
+      { en: "Situated inland", uz: "Ichki hududda joylashgan" },
+      { en: "Along the coast", uz: "Sohil bo'ylab" },
+      { en: "Connected by", uz: "Bilan bog'langan" },
+      { en: "Separated by", uz: "Bilan ajratilgan" },
+      { en: "Accessible via", uz: "Orqali kirish mumkin" },
+      { en: "Entrance is via", uz: "Kirish ... orqali" },
+      { en: "Giving access to", uz: "Kirish imkonini beruvchi" },
+      { en: "Leading to", uz: "Olib boruvchi" },
+      { en: "Linking A and B", uz: "A va B ni bog'lovchi" },
+      { en: "Runs through", uz: "Kesib o'tadi / Oqib o'tadi" },
+      { en: "Flows into", uz: "Quyiladi (daryo)" },
+      { en: "Stretches from ... to", uz: "Cho'ziladi ... dan ... gacha" },
+      { en: "Lined with trees", uz: "Daraxtlar bilan qator ekilgan" },
+      { en: "Dotted with", uz: "Nuqta kabi sochilgan" },
+      { en: "Overlooking the harbour", uz: "Bandargohga qaragan" },
+      { en: "With a view of", uz: "Manzarali / Ko'rinishli" },
+      { en: "In the heart of", uz: "Qoq markazida" },
+      { en: "On the horizon", uz: "Ufqda" },
+      { en: "Within easy reach", uz: "Oson yetib boriladigan joyda" },
+      { en: "Off the beaten track", uz: "Odam oyog'i yetmagan / Hilvat" },
+      { en: "Bustling area", uz: "Gavjum hudud" },
+      { en: "Quiet neighbourhood", uz: "Tinch mahalla" },
+      { en: "Newly built", uz: "Yangi qurilgan" },
+      { en: "Proposed site", uz: "Taklif qilingan joy" },
+      { en: "Current layout", uz: "Hozirgi tuzilish" },
+      { en: "Future development", uz: "Kelajakdagi rivojlanish" }
+    ]
+  }
+};
+
+// Helper function to robustly parse JSON from AI response and CLEAN strings
+const cleanAndParseJSON = (text) => {
+  try {
+    const match = text.match(/\{[\s\S]*\}/);
+    let jsonString = match ? match[0] : text;
+    
+    // Parse JSON first
+    const obj = JSON.parse(jsonString);
+
+    // Recursive function to clean strings in object
+    const cleanObject = (data) => {
+      if (typeof data === 'string') {
+        return data.replace(/\*\*/g, '').replace(/\*/g, '').replace(/```/g, '');
+      } else if (Array.isArray(data)) {
+        return data.map(item => cleanObject(item));
+      } else if (typeof data === 'object' && data !== null) {
+        const newObj = {};
+        for (const key in data) {
+          newObj[key] = cleanObject(data[key]);
+        }
+        return newObj;
+      }
+      return data;
+    };
+
+    return cleanObject(obj);
+  } catch (e) {
+    console.error("JSON Parsing Error:", e);
+    return null;
+  }
+};
+
+export default function App() {
+  const [category, setCategory] = useState('directions');
+  const [currentCard, setCurrentCard] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isFrontEnglish, setIsFrontEnglish] = useState(true);
+  
+  // AI State
+  const [aiExplanation, setAiExplanation] = useState(null);
+  const [aiQuiz, setAiQuiz] = useState(null);
+  const [aiDialogue, setAiDialogue] = useState(null); 
+  const [aiImage, setAiImage] = useState(null); 
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(false); 
+  const [imageError, setImageError] = useState(false);
+  const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [modalType, setModalType] = useState('explanation'); 
+  const [selectedQuizAnswer, setSelectedQuizAnswer] = useState(null);
+  const [showQuizResult, setShowQuizResult] = useState(false);
+  
+  // Dialogue Quiz State
+  const [dialogueQuizAnswer, setDialogueQuizAnswer] = useState(null);
+  const [dialogueCorrectLabel, setDialogueCorrectLabel] = useState(null);
+  const [dialogueQuizResult, setDialogueQuizResult] = useState(false);
+
+
+  useEffect(() => {
+    pickRandomCard();
+  }, [category]);
+
+  const pickRandomCard = () => {
+    const words = vocabularyData[category].words;
+    const randomIndex = Math.floor(Math.random() * words.length);
+    setCurrentCard(words[randomIndex]);
+    setIsFlipped(false);
+    setIsFrontEnglish(Math.random() < 0.5);
+    setAiExplanation(null);
+    setAiQuiz(null);
+    setAiDialogue(null);
+    setAiImage(null); 
+    setLoadingImage(false);
+    setImageError(false);
+    setApiKeyMissing(false);
+    setShowAIModal(false);
+    setSelectedQuizAnswer(null);
+    setShowQuizResult(false);
+    setDialogueQuizAnswer(null);
+    setDialogueCorrectLabel(null);
+    setDialogueQuizResult(false);
+  };
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+  };
+
+  const handleNext = () => {
+    pickRandomCard();
+  };
+
+  // CLEANUP: Stop audio when modal closes
+  useEffect(() => {
+    if (!showAIModal) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [showAIModal]);
+
+  const playAudio = (text, forceCancel = true) => {
+    if (!text) return;
+    const cleanText = text.replace(/\*\*/g, '').replace(/\*/g, '');
+    
+    if ('speechSynthesis' in window) {
+      if (forceCancel) {
+        window.speechSynthesis.cancel();
+      }
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang.includes('en-GB')) || 
+                      voices.find(v => v.lang.includes('en-US')) ||
+                      voices.find(v => v.lang.startsWith('en'));
+      
+      if (enVoice) {
+        utterance.voice = enVoice;
+      }
+      utterance.lang = 'en-GB'; 
+      utterance.rate = 0.9;
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const playQuizAudio = (text) => {
+    playAudio(text, true); 
+  };
+
+  const playFullDialogue = (lines) => {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); 
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang.includes('en-GB'));
+
+        lines.forEach(line => {
+            const cleanLineText = line.text.replace(/\*\*/g, '').replace(/\*/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanLineText);
+            if (enVoice) utterance.voice = enVoice;
+            utterance.lang = 'en-GB';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        });
+    }
+  };
+  
+  const handleDialogueQuiz = (label) => {
+      setDialogueQuizAnswer(label);
+      setDialogueQuizResult(true);
+  };
+
+  const generateAIContent = async (type, isRetry = false) => {
+    if (!currentCard) return;
+
+    if (!isRetry) {
+      setModalType(type);
+      setShowAIModal(true);
+      if (type === 'explanation' && aiExplanation) return;
+      if (type === 'quiz' && aiQuiz) return;
+      if (type === 'dialogue' && aiDialogue) return;
+    } else {
+      if (type === 'quiz') {
+        setAiQuiz(null);
+        setSelectedQuizAnswer(null);
+        setShowQuizResult(false);
+      }
+      if (type === 'dialogue') {
+        setAiDialogue(null);
+        setAiImage(null);
+        setImageError(false);
+        setApiKeyMissing(false);
+        setDialogueQuizAnswer(null);
+        setDialogueCorrectLabel(null);
+        setDialogueQuizResult(false);
+      }
+    }
+
+    setIsLoadingAI(true);
+
+    try {
+      let prompt = "";
+      
+      if (type === 'explanation') {
+        prompt = `
+          Explain the phrase "${currentCard.en}" for an Uzbek student preparing for IELTS Listening (Map Labeling tasks).
+          Provide:
+          1. A simple definition in Uzbek.
+          2. An example sentence in English related to directions or maps.
+          3. The Uzbek translation of that example sentence.
+          
+          Return raw JSON only (no markdown):
+          { "definitionUz": "...", "exampleEn": "...", "exampleUz": "..." }
+        `;
+      } else if (type === 'quiz') {
+        prompt = `
+          Create a "Listen and Fill" quiz question for IELTS Map Vocabulary.
+          Target word: "${currentCard.en}" (Translation: ${currentCard.uz}).
+          
+          Generate:
+          1. A full English sentence using the target word in a map direction context.
+          2. The same sentence but replace the target word with "[_______]".
+          3. 3 English options (1 correct target word, 2 distractors).
+          4. A short Uzbek explanation.
+
+          Return raw JSON only (no markdown):
+          { 
+            "full_sentence": "...",
+            "question_with_blank": "...", 
+            "options": ["...", "...", "..."], 
+            "correctIndex": 0, 
+            "explanation": "..." 
+          }
+        `;
+      } else if (type === 'dialogue') {
+        prompt = `
+          Generate a "Map Labelling" exercise dialogue.
+          Context: A Tourist asks a Local for directions to a specific place (The Destination), using "${currentCard.en}".
+          
+          Scenario:
+          1. Imagine a map with 3 locations labeled 'A', 'B', and 'C'.
+          2. The Local gives directions from a "Start" point to one of these locations (The Destination).
+          3. The Local MUST use the word "${currentCard.en}" in the directions.
+          4. The directions should clearly point to one specific label (A, B, or C).
+          
+          Output JSON (No Markdown):
+          {
+            "topicUz": "Short Uzbek summary", 
+            "mapVisualPrompt": "A top-down map diagram for IELTS listening. White background. Clearly show a START point labeled 'YOU ARE HERE'. Show 3 buildings labeled with large letters 'A', 'B', and 'C'. The layout must match these directions: [Insert directions here]. Use '${currentCard.en}' visually in the layout (e.g. if 'corner', put building on corner). Style: Educational sketch, black lines.",
+            "correctLabel": "A", 
+            "lines": [
+              { "speaker": "Tourist", "text": "..." },
+              { "speaker": "Local", "text": "..." }
+            ]
+          }
+        `;
+      }
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" },
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.candidates && data.candidates[0].content) {
+        const rawText = data.candidates[0].content.parts[0].text;
+        const result = cleanAndParseJSON(rawText);
+        
+        if (result) {
+          if (type === 'explanation') {
+            setAiExplanation(result);
+          } else if (type === 'quiz') {
+            if (result.options && typeof result.correctIndex === 'number') {
+                const correctAnswer = result.options[result.correctIndex];
+                const shuffled = [...result.options];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                result.options = shuffled;
+                result.correctIndex = shuffled.indexOf(correctAnswer);
+            }
+            setAiQuiz(result);
+          } else if (type === 'dialogue') {
+            setAiDialogue(result);
+            setDialogueCorrectLabel(result.correctLabel);
+            setIsLoadingAI(false); 
+
+            // --- IMAGE GENERATION ---
+            // If apiKey is empty, skip generation to avoid 401 error
+            if (!apiKey) {
+                setApiKeyMissing(true);
+                return;
+            }
+
+            setLoadingImage(true);
+            setAiImage(null);
+            setImageError(false);
+            
+            const visualPrompt = result.mapVisualPrompt || `A simple schematic map diagram showing ${currentCard.en} with labels A, B, C and YOU ARE HERE marker.`;
+            
+            try {
+                const imgResponse = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            instances: [{ prompt: visualPrompt }],
+                            parameters: { sampleCount: 1 }
+                        }),
+                    }
+                );
+
+                if (!imgResponse.ok) {
+                    throw new Error(`Image API Error: ${imgResponse.status}`);
+                }
+
+                const imgData = await imgResponse.json();
+                
+                if (imgData.predictions && imgData.predictions[0]) {
+                    setAiImage(`data:image/png;base64,${imgData.predictions[0].bytesBase64Encoded}`);
+                } else {
+                    throw new Error("No image data");
+                }
+            } catch (imgErr) {
+                console.warn("Image Gen Error (non-critical):", imgErr); // Warn instead of Error
+                setImageError(true);
+            } finally {
+                setLoadingImage(false);
+            }
+            return; 
+          }
+        } else {
+          throw new Error("Failed to parse JSON");
+        }
+      } else {
+        throw new Error("No data");
+      }
+    } catch (error) {
+      console.error("AI Error:", error);
+      if (type === 'quiz') {
+         setAiQuiz({
+             full_sentence: `Please ${currentCard.en}.`,
+             question_with_blank: "Please [_______].",
+             options: [currentCard.en, "turn back", "stop"],
+             correctIndex: 0,
+             explanation: "Internet xatosi. Iltimos qayta urining."
+         });
+      }
+    } finally {
+      if (type !== 'dialogue' || !aiDialogue) {
+          setIsLoadingAI(false);
+      }
+    }
+  };
+
+  const handleQuizAnswer = (index) => {
+    setSelectedQuizAnswer(index);
+    setShowQuizResult(true);
+  };
+
+  if (!currentCard) return <div className="p-10 text-center">Yuklanmoqda...</div>;
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans selection:bg-blue-100">
+      <div className="max-w-md mx-auto min-h-screen flex flex-col relative">
+        
+        {/* Header */}
+        <div className="bg-white shadow-sm p-4 sticky top-0 z-20">
+          <div className="flex flex-col mb-4">
+             <div className="flex items-center justify-between mb-2">
+                <h1 className="text-xl font-bold text-blue-600 flex items-center gap-2">
+                  <Book className="w-6 h-6" />
+                  Map Words
+                </h1>
+                <span className="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  {vocabularyData[category].words.length} ta so'z
+                </span>
+             </div>
+             <div className="text-sm text-gray-500 font-medium">
+                Bo'lim: <span className="text-blue-600 font-bold">{vocabularyData[category].title}</span>
+             </div>
+          </div>
+
+          <div className="flex gap-2 flex-wrap pb-2">
+            {Object.keys(vocabularyData).map((key) => (
+              <button
+                key={key}
+                onClick={() => setCategory(key)}
+                className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors mb-2 ${
+                  category === key
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {vocabularyData[key].icon}
+                {key === 'phrases' ? 'Iboralar' : vocabularyData[key].title.split(' ')[0]} 
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-4 flex flex-col justify-center items-center pb-40">
+          
+          {/* Card Container */}
+          <div className="w-full h-[300px] relative cursor-pointer mb-6 perspective-1000" onClick={handleFlip}>
+             <div className={`w-full h-full relative transition-all duration-500 transform style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
+                
+                {/* Front (English or Uzbek) */}
+                <div 
+                  className="absolute inset-0 bg-white rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col items-center justify-center text-center backface-hidden z-10"
+                >
+                    <span className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                      {isFrontEnglish ? "Inglizcha" : "O'zbekcha"}
+                    </span>
+                    
+                    {isFrontEnglish && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); playAudio(currentCard.en); }}
+                        className={`mb-6 p-4 rounded-full transition-all ${isPlaying ? 'bg-green-100 text-green-600 scale-110 shadow-lg' : 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-105'}`}
+                        title="Talaffuzni eshitish"
+                      >
+                        <Volume2 size={32} className={isPlaying ? "animate-pulse" : ""} />
+                      </button>
+                    )}
+
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 mb-2 leading-tight break-words max-w-full">
+                      {isFrontEnglish ? currentCard.en : currentCard.uz}
+                    </h2>
+                    <p className="text-sm text-gray-400 mt-4">(Javobni ko'rish uchun bosing)</p>
+                </div>
+
+                {/* Back (Translation) */}
+                <div 
+                  className="absolute inset-0 bg-blue-50 rounded-2xl shadow-xl border border-blue-100 p-8 flex flex-col items-center justify-center text-center backface-hidden rotate-y-180 z-0"
+                >
+                    <span className="text-sm font-bold text-blue-400 uppercase tracking-widest mb-4">
+                       {isFrontEnglish ? "O'zbekcha" : "Inglizcha"}
+                    </span>
+                    
+                    {!isFrontEnglish && (
+                      <div className="flex items-center gap-2 mb-4">
+                         <button 
+                            onClick={(e) => { e.stopPropagation(); playAudio(currentCard.en); }}
+                            className="p-2 rounded-full bg-white text-blue-600 shadow-sm hover:bg-blue-50"
+                            title="Qayta eshitish"
+                          >
+                            <Volume2 size={20} />
+                          </button>
+                      </div>
+                    )}
+
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-blue-900 mb-2 leading-tight break-words max-w-full">
+                      {isFrontEnglish ? currentCard.uz : currentCard.en}
+                    </h2>
+                    <div className="mt-6 flex items-center gap-2 text-green-600 text-sm font-medium">
+                      <CheckCircle size={16} />
+                      Eslab qoldingizmi?
+                    </div>
+                </div>
+             </div>
+          </div>
+
+          {/* AI Buttons Grid */}
+          <div className="w-full grid grid-cols-2 gap-3 mb-6">
+            <button 
+              onClick={(e) => { e.stopPropagation(); generateAIContent('explanation'); }}
+              className="bg-white border border-indigo-100 text-indigo-600 font-bold py-3 px-4 rounded-xl shadow-sm flex flex-col items-center justify-center gap-1 hover:bg-indigo-50 active:scale-95 transition-all"
+            >
+              <Sparkles size={20} className="text-indigo-500" />
+              <span className="text-sm">AI Sharh</span>
+            </button>
+
+            <button 
+              onClick={(e) => { e.stopPropagation(); generateAIContent('quiz'); }}
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-4 rounded-xl shadow-md flex flex-col items-center justify-center gap-1 hover:opacity-90 active:scale-95 transition-all"
+            >
+              <Headphones size={20} className="text-white" />
+              <span className="text-sm">AI Eshitish</span>
+            </button>
+
+            <button 
+              onClick={(e) => { e.stopPropagation(); generateAIContent('dialogue'); }}
+              className="col-span-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold py-3 px-4 rounded-xl shadow-md flex flex-row items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all"
+            >
+              <MapPin size={20} className="text-white" />
+              <span className="text-sm">AI Map Mashqi</span>
+            </button>
+          </div>
+
+          {/* Tips Section */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 w-full text-sm text-yellow-800">
+            <h3 className="font-bold flex items-center gap-2 mb-1">
+              🎧 Listening Maslahati:
+            </h3>
+            <p className="mb-1">
+               So'zlarni eshitib, xaritadagi joylashuvini tasavvur qiling. AI funksiyalari orqali bilimingizni sinang.
+            </p>
+          </div>
+
+        </div>
+
+        {/* AI Modal */}
+        {showAIModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 duration-300 max-h-[85vh] flex flex-col">
+              
+              <div className={`p-4 flex justify-between items-center text-white 
+                ${modalType === 'explanation' ? 'bg-indigo-600' : 
+                  modalType === 'quiz' ? 'bg-purple-600' : 'bg-teal-600'}`}>
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  {modalType === 'explanation' ? <Sparkles size={18} /> : 
+                   modalType === 'quiz' ? <Headphones size={18} /> : <MapPin size={18} />}
+                  {modalType === 'explanation' ? 'Gemini Izohi' : 
+                   modalType === 'quiz' ? 'Eshitib Topish' : 'Map Labeling'}
+                </h3>
+                <div className="flex items-center gap-2">
+                  {(modalType === 'quiz' || modalType === 'dialogue') && !isLoadingAI && (
+                    <button 
+                      onClick={() => generateAIContent(modalType, true)} 
+                      className="hover:bg-white/20 p-2 rounded-full transition-colors"
+                      title="Yangi kontent"
+                    >
+                      <RefreshCw size={20} />
+                    </button>
+                  )}
+                  <button onClick={() => setShowAIModal(false)} className="hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-6 overflow-y-auto">
+                {isLoadingAI ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-4 text-gray-500">
+                    <Loader2 size={40} className="animate-spin text-gray-400" />
+                    <p>Sun'iy intellekt o'ylamoqda...</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* EXPLANATION MODE */}
+                    {modalType === 'explanation' && aiExplanation && (
+                      <div className="space-y-4">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                          <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider block mb-2">Izoh</span>
+                          <p className="text-gray-800 font-medium leading-relaxed">{aiExplanation.definitionUz}</p>
+                        </div>
+                        <div className="bg-green-50 p-4 rounded-xl border border-green-100">
+                          <span className="text-xs font-bold text-green-600 uppercase tracking-wider block mb-2">Misol (Eng)</span>
+                          <p className="text-gray-800 italic text-lg">"{aiExplanation.exampleEn}"</p>
+                        </div>
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Tarjima (Uz)</span>
+                          <p className="text-gray-700">{aiExplanation.exampleUz}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* QUIZ MODE */}
+                    {modalType === 'quiz' && aiQuiz && (
+                      <div className="space-y-6">
+                        <div className="bg-purple-50 p-6 rounded-xl border border-purple-100 flex flex-col items-center gap-4">
+                           <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">Gapni Eshitib To'ldiring</span>
+                           <div className="text-xl font-bold text-gray-800 text-center leading-relaxed">
+                             "{aiQuiz.question_with_blank}"
+                           </div>
+                           <button 
+                             onClick={() => playQuizAudio(aiQuiz.full_sentence)}
+                             className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all active:scale-95"
+                           >
+                             <Volume2 size={24} />
+                             Gapni Eshitish
+                           </button>
+                        </div>
+                        <div className="space-y-3">
+                          {aiQuiz.options.map((option, idx) => {
+                            let btnClass = "w-full p-4 rounded-xl text-left border-2 transition-all font-medium text-lg ";
+                            if (showQuizResult) {
+                              if (idx === aiQuiz.correctIndex) btnClass += "bg-green-100 border-green-500 text-green-800";
+                              else if (idx === selectedQuizAnswer) btnClass += "bg-red-50 border-red-300 text-red-800";
+                              else btnClass += "bg-gray-50 border-gray-100 text-gray-400";
+                            } else {
+                              btnClass += "bg-white border-gray-200 hover:border-purple-300 hover:bg-purple-50 text-gray-700";
+                            }
+                            return (
+                              <button key={idx} disabled={showQuizResult} onClick={() => handleQuizAnswer(idx)} className={btnClass}>
+                                {option}
+                                {showQuizResult && idx === aiQuiz.correctIndex && <CheckCircle size={20} className="inline ml-2 text-green-600" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {showQuizResult && (
+                          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-bottom-2">
+                            <span className="text-xs font-bold text-blue-500 uppercase tracking-wider block mb-1">Tushuntirish</span>
+                            <p className="text-sm text-blue-800">{aiQuiz.explanation}</p>
+                            <button onClick={() => generateAIContent('quiz', true)} className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center gap-2">
+                              <RefreshCw size={16} />
+                              Yangi savol
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* DIALOGUE/MAP MODE */}
+                    {modalType === 'dialogue' && aiDialogue && (
+                      <div className="space-y-4">
+                        <div className="w-full h-40 bg-gray-100 rounded-xl overflow-hidden mb-2 border border-teal-100 shadow-sm animate-in fade-in duration-500 flex items-center justify-center relative">
+                            {loadingImage ? (
+                                <div className="flex flex-col items-center gap-2 text-teal-600">
+                                    <Loader2 size={24} className="animate-spin" />
+                                    <span className="text-xs font-medium">Xarita chizilmoqda...</span>
+                                </div>
+                            ) : apiKeyMissing ? (
+                                 <div className="flex flex-col items-center gap-2 text-orange-400 p-4 text-center">
+                                    <Key size={24} />
+                                    <span className="text-xs font-medium">API kalit kiritilmagan</span>
+                                </div>
+                            ) : imageError ? (
+                                <div className="flex flex-col items-center gap-2 text-red-400 p-4 text-center">
+                                    <AlertCircle size={24} />
+                                    <span className="text-xs font-medium">Rasm yuklanmadi (Limit yoki Xato)</span>
+                                </div>
+                            ) : (
+                                // Use AI image if available, else fallback map
+                                <div className="w-full h-full relative">
+                                   {aiImage ? (
+                                      <img src={aiImage} alt="Map illustration" className="w-full h-full object-cover" />
+                                   ) : (
+                                      // Fallback SVG Map when API fails or is loading
+                                      <div className="w-full h-full bg-blue-50 flex items-center justify-center">
+                                          <Map size={48} className="text-blue-200" />
+                                          <span className="absolute bottom-2 text-xs text-blue-400">Standart Xarita</span>
+                                      </div>
+                                   )}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="bg-teal-50 p-3 rounded-lg border border-teal-100 text-sm text-teal-800 italic text-center">
+                          {aiDialogue.topicUz}
+                        </div>
+                        <div className="space-y-4">
+                          {aiDialogue.lines.map((line, idx) => (
+                            <div key={idx} className={`flex flex-col ${line.speaker === 'Tourist' ? 'items-start' : 'items-end'}`}>
+                              <div className={`text-xs font-bold mb-1 ${line.speaker === 'Tourist' ? 'text-blue-500 ml-1' : 'text-orange-500 mr-1'}`}>
+                                {line.speaker}
+                              </div>
+                              <div className={`p-3 rounded-2xl max-w-[85%] relative group cursor-pointer transition-all active:scale-95
+                                ${line.speaker === 'Tourist' ? 'bg-blue-50 text-blue-900 rounded-tl-none border border-blue-100' : 'bg-orange-50 text-orange-900 rounded-tr-none border border-orange-100'}`}
+                                onClick={() => playAudio(line.text)}
+                              >
+                                {line.text}
+                                <Volume2 size={14} className="absolute bottom-1 right-2 opacity-20 group-hover:opacity-50" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Interactive A/B/C Buttons */}
+                         <div className="grid grid-cols-3 gap-2 mt-2">
+                            {['A', 'B', 'C'].map((option) => {
+                                let btnClass = "py-3 rounded-xl font-bold border-2 transition-all ";
+                                if (dialogueQuizResult) {
+                                    if (option === dialogueCorrectLabel) {
+                                        btnClass += "bg-green-100 border-green-500 text-green-700";
+                                    } else if (option === dialogueQuizAnswer && option !== dialogueCorrectLabel) {
+                                        btnClass += "bg-red-100 border-red-500 text-red-700";
+                                    } else {
+                                        btnClass += "bg-gray-50 border-gray-200 text-gray-400";
+                                    }
+                                } else {
+                                    btnClass += "bg-white border-teal-200 text-teal-700 hover:bg-teal-50";
+                                }
+                                return (
+                                    <button 
+                                        key={option} 
+                                        disabled={dialogueQuizResult}
+                                        onClick={() => handleDialogueQuiz(option)}
+                                        className={btnClass}
+                                    >
+                                        {option}
+                                    </button>
+                                )
+                            })}
+                         </div>
+
+                        <button 
+                          onClick={() => playFullDialogue(aiDialogue.lines)}
+                          className="w-full mt-2 bg-teal-100 text-teal-700 py-3 rounded-xl font-bold hover:bg-teal-200 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Volume2 size={20} />
+                          To'liq tinglash
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              
+              <div className="p-4 border-t bg-gray-50 text-center">
+                 <button onClick={() => setShowAIModal(false)} className="w-full bg-gray-200 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-300 transition-colors">
+                   Yopish
+                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer Actions */}
+        <div className="p-4 bg-white border-t border-gray-100 grid grid-cols-2 gap-4 sticky bottom-0 z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+          <button 
+            onClick={handleFlip}
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 active:scale-95 transition-all"
+          >
+            <Eye size={20} />
+            {isFlipped ? "Yashirish" : "Ko'rish"}
+          </button>
+          
+          <button 
+            onClick={handleNext}
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all"
+          >
+            Keyingisi
+            <ArrowRight size={20} />
+          </button>
+        </div>
+
+      </div>
+      
+      <style>{`
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .style-preserve-3d {
+          transform-style: preserve-3d;
+        }
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+        .backface-hidden {
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+      `}</style>
+    </div>
+  );
+}{\rtf1}
